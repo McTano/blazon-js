@@ -12,13 +12,14 @@ export default class CreationArea extends Component<{}, State> {
         roll: [],
     };
 
-    handleBlazonChange = (event: SyntheticMouseEvent<HTMLInputElement>) => {
+    handleBlazonChange = (event: SyntheticEvent<HTMLInputElement>) => {
         this.setState({
             blazonInput: event.currentTarget.value,
         });
     };
 
-    emblazon = () => {
+    emblazon = (event: SyntheticEvent<>) => {
+        event.preventDefault();
         this.setState((state: State) => ({
             roll: [...state.roll, parseBlazon(state.blazonInput)],
         }));
@@ -27,17 +28,14 @@ export default class CreationArea extends Component<{}, State> {
     render() {
         return (
             <div className="creation-area">
-                <div className="input-container">
-                    <p>What would you like me to blazon?</p>
+                <form className="blazon-input-form" onSubmit={this.emblazon}>
                     <input
                         type="text"
                         value={this.state.blazonInput}
                         onChange={this.handleBlazonChange}
                     />
-                    <button type="button" onClick={this.emblazon}>
-                        Emblazon
-                    </button>
-                </div>
+                    <button type="submit">Emblazon</button>
+                </form>
                 <Roll roll={this.state.roll} />
             </div>
         );
