@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import type { Blazon } from '../Blazon';
+import * as Blazon from '../Blazon';
 import ShieldView from './ShieldView';
 
-const Roll = ({ roll }: { roll: Array<Blazon> }) => (
+const Roll = ({ roll }: { roll: Array<Blazon.Shield> }) => (
     <div className="roll">
-        {roll.map<React.Node>((blazon: Blazon) => (
+        {roll.map<React.Node>((blazon: Blazon.Shield) => (
             <ShieldView blazon={blazon} />
         ))}
     </div>

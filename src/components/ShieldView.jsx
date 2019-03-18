@@ -1,12 +1,19 @@
 // @flow
 import * as React from 'react';
-import Field from './Field';
-import type { Blazon } from '../Blazon';
 
-const ShieldView: ({ blazon: Blazon }) => React.Node = ({ blazon }: { blazon: Blazon }) => (
-    <div className="shield">
-        <Field tincture={blazon.tincture}>
-            <div className="charge" />
+import Field from './Field';
+import Charge from './Charge';
+
+import * as Blazon from '../Blazon';
+
+const ShieldView: ({ blazon: Blazon.Shield }) => React.Node = ({
+    blazon: { raw, tincture, charges },
+}) => (
+    <div className="shield" alt={raw}>
+        <Field tincture={tincture}>
+            {charges.map((charge) => (
+                <Charge {...charge} />
+            ))}
         </Field>
     </div>
 );

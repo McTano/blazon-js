@@ -1,8 +1,9 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 
-export default ({ tincture }: { tincture: string }) => (
-    <div className={`field ${tincture || 'proper'}`}>Charges go here.</div>
-);
+const Field: ({ children?: React.Node, tincture: string }) => React.Node = ({
+    children,
+    tincture,
+}) => <div className={`field ${tincture || 'proper'}`}>{children}</div>;
 
-// export default Field;
+export default Field;

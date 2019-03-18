@@ -1,10 +1,9 @@
 // @flow
 import React, { Component } from 'react';
-import { parseBlazon } from '../Blazon';
-import type { Blazon } from '../Blazon';
+import * as Blazon from '../Blazon';
 import Roll from './Roll';
 
-type State = { blazonInput: string, roll: Array<Blazon> };
+type State = { blazonInput: string, roll: Array<Blazon.Shield> };
 
 export default class CreationArea extends Component<{}, State> {
     state = {
@@ -21,7 +20,7 @@ export default class CreationArea extends Component<{}, State> {
     emblazon = (event: SyntheticEvent<>) => {
         event.preventDefault();
         this.setState((state: State) => ({
-            roll: [...state.roll, parseBlazon(state.blazonInput)],
+            roll: [...state.roll, Blazon.parse(state.blazonInput)],
         }));
     };
 
