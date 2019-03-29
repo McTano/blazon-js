@@ -46,6 +46,10 @@ $tinctures: (
     .field.#{$tinctureName} {
         background-color: $htmlColor;
     }
+
+    .charge.#{$tinctureName} {
+        color: $htmlColor;
+    }
 }
 
 .roll {

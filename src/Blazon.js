@@ -2,7 +2,11 @@
 
 export const parse = (b: string) => {
     const parts = b.split(',');
-    return { raw: b, field: parseField(parts[0]), charges: parseCharges(parts.slice(1)) };
+    return {
+        raw: b,
+        field: parseField(parts[0]),
+        charges: parseCharges(parts.slice(1)),
+    };
 };
 
 const parseField = (fieldExpr: string) => ({
@@ -16,9 +20,11 @@ const parseCharges = charges => {
         const parts = chargeExpr.trim().split(' ');
         const number = parts[0];
         const name = parts[1];
-        const modifiers = parts.slice(2).map(modifierExpr => ({
-            raw: modifierExpr,
-        }));
+        const modifiers = parts
+            .slice(2)
+            .map(modifierExpr => ({
+                raw: modifierExpr,
+            }));
         return { raw, name, modifiers };
     });
 };
@@ -47,24 +53,23 @@ export type Modifier = {
 };
 
 export type Builder<T> = {
-    enclosedState: T,
     selfApply: SelfApply<T>, // applies function to enclosedState
 };
 
 export type SelfApply<T> = ((T) => T) => Builder<T>;
 
-export const newSelfApply = <T>(prevState: T): SelfApply<T> => {
+export const newSelfApply = <T>(
+    prevState: T,
+): SelfApply<T> => {
     return f => {
         const nextState = f(prevState);
         return {
-            enclosedState: nextState,
             selfApply: newSelfApply(nextState),
         };
     };
 };
 
 export const emptyShield: Builder<Shield> = {
-    enclosedState: {},
     selfApply: newSelfApply<Shield>({}),
 };
 
