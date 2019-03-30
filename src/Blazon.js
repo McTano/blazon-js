@@ -1,4 +1,5 @@
 // @flow
+import { set } from 'immutable';
 
 export const parse = (b: string) => {
     const parts = b.split(',');
@@ -43,13 +44,14 @@ export type Field = {
 export type Charge = {
     raw: string,
     name: string,
-    modifiers: Array<Modifier>,
+    tincture: string,
+    // modifiers: Array<Modifier<Charge>,
     // func: (Shield) => Shield,
 };
 
-export type Modifier = {
+export type Modifier<T> = {
     raw: string,
-    // func: (Charge) => Charge,
+    func: T => T,
 };
 
 export type Builder<T> = {
@@ -72,6 +74,38 @@ export const newSelfApply = <T>(
 export const emptyShield: Builder<Shield> = {
     selfApply: newSelfApply<Shield>({}),
 };
+
+// type Tincture =
+//     | 'OR'
+//     | 'GULES'
+//     | 'SABLE'
+//     | 'ARGENT'
+//     | 'PURPURE'
+//     | 'AZURE'
+//     | 'VERT';
+
+const TINCTURES = [
+    'OR',
+    'GULES',
+    'SABLE',
+    'ARGENT',
+    'PURPURE',
+    'AZURE',
+    'VERT',
+];
+
+type Tincture = $Keys<typeof TINCTURE_FUNCTIONS>;
+
+const TINCTURE_FUNCTIONS = TINCTURES.reduce(
+    (
+        acc: Map<Tincture, (Shield) => Shield>,
+        name: Tincture,
+    ) =>
+        set(acc, name, shield =>
+            set(shield, 'tincture', name),
+        ),
+    {},
+);
 
 // (shield or (a (lion gules)))
 // emptyShield.selfApply(or).selfApply((a (lion gules)))
