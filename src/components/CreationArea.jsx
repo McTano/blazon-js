@@ -23,7 +23,7 @@ export default class CreationArea extends Component<{}, State> {
     emblazon = (event: SyntheticEvent<>) => {
         event.preventDefault();
         this.setState((state: State) => ({
-            roll: [...state.roll, Blazon.parseBlazon(state.blazonInput)]
+            roll: [Blazon.parseBlazon(state.blazonInput), ...state.roll]
         }));
     };
 
