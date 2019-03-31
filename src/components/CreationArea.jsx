@@ -5,43 +5,32 @@ import Roll from './Roll';
 
 type State = {
     blazonInput: string,
-    roll: Array<Blazon.Shield>,
+    roll: Array<Blazon.Shield>
 };
 
-export default class CreationArea extends Component<
-    {},
-    State,
-> {
+export default class CreationArea extends Component<{}, State> {
     state = {
-        blazonInput: 'sable, a lion gules',
-        roll: [],
+        blazonInput: 'or, lion gules',
+        roll: []
     };
 
-    handleBlazonChange = (
-        event: SyntheticEvent<HTMLInputElement>,
-    ) => {
+    handleBlazonChange = (event: SyntheticEvent<HTMLInputElement>) => {
         this.setState({
-            blazonInput: event.currentTarget.value,
+            blazonInput: event.currentTarget.value
         });
     };
 
     emblazon = (event: SyntheticEvent<>) => {
         event.preventDefault();
         this.setState((state: State) => ({
-            roll: [
-                ...state.roll,
-                Blazon.parse(state.blazonInput),
-            ],
+            roll: [...state.roll, Blazon.parseBlazon(state.blazonInput)]
         }));
     };
 
     render() {
         return (
             <div className="creation-area">
-                <form
-                    className="blazon-input-form"
-                    onSubmit={this.emblazon}
-                >
+                <form className="blazon-input-form" onSubmit={this.emblazon}>
                     <input
                         type="text"
                         value={this.state.blazonInput}

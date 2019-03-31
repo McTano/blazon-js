@@ -7,12 +7,10 @@ import ChargeView from './ChargeView';
 import * as Blazon from '../Blazon';
 
 const ShieldView: ({
-    blazon: Blazon.Shield,
-}) => React.Node = ({
-    blazon: { raw, field, charges },
-}) => (
+    blazon: Blazon.Shield
+}) => React.Node = ({ blazon: { raw, fill, charges } }) => (
     <div className="shield" alt={raw}>
-        <FieldView tincture={field.tincture}>
+        <FieldView tincture={fill}>
             {charges.map(charge => (
                 <ChargeView {...charge} />
             ))}

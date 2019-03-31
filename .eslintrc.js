@@ -1,7 +1,7 @@
 module.exports = {
     parser: 'babel-eslint',
     parserOptions: {
-        ecmaVersion: 2018,
+        ecmaVersion: 2018
     },
     plugins: ['react', 'import', 'prettier'],
     globals: {
@@ -14,31 +14,30 @@ module.exports = {
         beforeEach: true,
         afterEach: true,
         afterAll: true,
-        expect: true,
+        expect: true
     },
     extends: [
         'airbnb',
         'prettier',
         'prettier/react',
         'plugin:flowtype/recommended',
-        'plugin:jsx-a11y/recommended',
+        'plugin:jsx-a11y/recommended'
     ],
     root: true,
     env: {
         es6: true,
         browser: true,
-        node: true,
+        node: true
     },
     rules: {
         'prettier/prettier': [
-            'error',
+            'warn',
             {
-                printWidth: 60,
-                trailingComma: 'all',
+                printWidth: 80,
                 tabWidth: 4,
                 singleQuote: true,
-                endOfLine: 'lf',
-            },
+                endOfLine: 'lf'
+            }
         ],
         'no-unused-vars': 'warn',
         'no-unused-expressions': 'warn',
@@ -46,6 +45,6 @@ module.exports = {
         'react/destructuring-assignment': 'off',
         'import/prefer-default-export': 'off',
         'no-use-before-define': 'off',
-        'react/prop-types': 'off',
-    },
+        'react/prop-types': 'off'
+    }
 };

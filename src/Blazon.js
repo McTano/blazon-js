@@ -1,88 +1,71 @@
 // @flow
-import { set } from 'immutable';
+import { Map, get, set, setIn } from 'immutable';
 
-export const parse = (b: string) => {
-    const parts = b.split(',');
+export const parseBlazon: string => Shield = (b: string) => {
+    const phrases = b.split(',');
     return {
+        type: 'Shield',
         raw: b,
-        field: parseField(parts[0]),
-        charges: parseCharges(parts.slice(1)),
+        fill: parseField(phrases[0]),
+        charges: parseCharges(phrases.slice(1))
     };
 };
 
-const parseField = (fieldExpr: string) => ({
-    raw: fieldExpr,
-    tincture: fieldExpr,
-});
+// const applyModifiers = <T>(
+//     initialValue: T,
+//     modifiers: Array<(T) => T>,
+// ) =>
+//     modifiers.reduce(
+//         (acc, modifier) => lookup(modifier)(acc),
+//         initialValue,
+//     );
 
-const parseCharges = charges => {
+const parseField: string => Field = fieldExpr => {
+    // raw: fieldExpr,
+    // tincture: fieldExpr,
+    return fieldExpr;
+};
+
+const parseCharges: (Array<string>) => Array<Charge> = charges => {
     return charges.map<Charge>(chargeExpr => {
         const raw = chargeExpr;
-        const parts = chargeExpr.trim().split(' ');
-        const number = parts[0];
-        const name = parts[1];
-        const modifiers = parts
+        const words = chargeExpr.trim().split(' ');
+        const number = words[0];
+        const name = words[1];
+        const basicCharge: Charge = {
+            type: 'Charge',
+            raw,
+            number,
+            name
+        };
+        return words
             .slice(2)
-            .map(modifierExpr => ({
-                raw: modifierExpr,
-            }));
-        return { raw, name, modifiers };
+            .reduce<Charge>(
+                (charge: Charge, modifierExpr) =>
+                    lookupCharge(modifierExpr)(charge),
+                basicCharge
+            );
     });
 };
 
 export type Shield = {
+    type: 'Shield',
     raw: string,
-    field: Field,
-    charges: Array<Charge>,
+    fill?: Field,
+    charges: Array<Charge>
 };
 
-export type Field = {
-    raw: string,
-    tincture: string,
-};
+export type Field = Tincture;
 
 export type Charge = {
+    type: 'Charge',
     raw: string,
     name: string,
-    tincture: string,
-    // modifiers: Array<Modifier<Charge>,
+    number?: string,
+    fill?: string,
+    attitude?: string
     // func: (Shield) => Shield,
 };
-
-export type Modifier<T> = {
-    raw: string,
-    func: T => T,
-};
-
-export type Builder<T> = {
-    selfApply: SelfApply<T>, // applies function to enclosedState
-};
-
-export type SelfApply<T> = ((T) => T) => Builder<T>;
-
-export const newSelfApply = <T>(
-    prevState: T,
-): SelfApply<T> => {
-    return f => {
-        const nextState = f(prevState);
-        return {
-            selfApply: newSelfApply(nextState),
-        };
-    };
-};
-
-export const emptyShield: Builder<Shield> = {
-    selfApply: newSelfApply<Shield>({}),
-};
-
-// type Tincture =
-//     | 'OR'
-//     | 'GULES'
-//     | 'SABLE'
-//     | 'ARGENT'
-//     | 'PURPURE'
-//     | 'AZURE'
-//     | 'VERT';
 
 const TINCTURES = [
     'OR',
@@ -91,36 +74,34 @@ const TINCTURES = [
     'ARGENT',
     'PURPURE',
     'AZURE',
-    'VERT',
+    'VERT'
 ];
+
+export const TINCTURE_FUNCTIONS = TINCTURES.reduce(
+    (acc: Map<Tincture, (Element) => Element>, name: Tincture | string) =>
+        set(acc, name, el => set(el, 'fill', name)),
+    new Map()
+);
+
+type Element = Shield | Charge;
 
 type Tincture = $Keys<typeof TINCTURE_FUNCTIONS>;
 
-const TINCTURE_FUNCTIONS = TINCTURES.reduce(
-    (
-        acc: Map<Tincture, (Shield) => Shield>,
-        name: Tincture,
-    ) =>
-        set(acc, name, shield =>
-            set(shield, 'tincture', name),
-        ),
-    {},
-);
+const Lexicon: Map<string, ?(Element) => Element> = TINCTURE_FUNCTIONS;
 
-// (shield or (a (lion gules)))
-// emptyShield.selfApply(or).selfApply((a (lion gules)))
-// {field: or}.selfApply((lion gules))
-// Something a bit off here, lion should be a builder until it finishes building,
-// then it should return a function.
-// {field: or}.selfApply(emptyCharge.selfApply(lion).selfApply(gules))
-// {field: or}.selfApply({kind: lion}.selfApply(gules))
-// {field: or}.selfApply({kind: lion, tincture: gules})
+const lookup: string => Element => Element = name =>
+    get(Lexicon, name.toUpperCase(), (s: Element) => s);
+
+const lookupCharge: string => Charge => Charge = name =>
+    get(Lexicon, name, (s: Charge) => s);
+
 export const exampleShield = {
+    type: 'Shield',
     field: 'or',
     charges: [
         {
             kind: 'lion',
-            tincture: 'gules',
-        },
-    ],
+            tincture: 'gules'
+        }
+    ]
 };

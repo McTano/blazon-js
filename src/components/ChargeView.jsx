@@ -6,13 +6,10 @@ import * as Blazon from '../Blazon';
 const ChargeView: (blazon: Blazon.Charge) => React.Node = ({
     raw,
     name,
-    modifiers,
+    fill,
+    attitude
 }) => {
-    const classList = [
-        'charge',
-        name,
-        ...modifiers.map(c => c.raw),
-    ].join(' ');
+    const classList = ['charge', name, fill].join(' ');
     return (
         <div className={classList} alt={raw}>
             {raw}
